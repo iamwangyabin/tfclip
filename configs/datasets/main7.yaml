@@ -1,0 +1,8 @@
+datasets:
+  - dtd
+  - food101
+  - oxford_pets
+  - flowers102
+  - fgvc_aircraft
+  - eurosat
+  - stanford_cars

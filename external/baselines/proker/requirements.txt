@@ -1,0 +1,11 @@
+tqdm
+pyyaml
+numpy 
+scipy 
+pandas
+matplotlib
+ftfy
+regex
+torch 
+torchvision
+cudatoolkit

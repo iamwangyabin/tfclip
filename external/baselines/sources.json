@@ -1,0 +1,94 @@
+{
+  "fetched_at": "2026-06-10",
+  "snapshots": [
+    {
+      "directory": "external/baselines/clip",
+      "name": "CLIP",
+      "upstream": "https://github.com/openai/CLIP.git",
+      "branch": "main",
+      "commit": "d05afc436d78f1c48dc0dbf8e5980a9d471f35f6",
+      "methods": [
+        "zero_shot_clip",
+        "prompt_ensemble",
+        "linear_probe_reference"
+      ]
+    },
+    {
+      "directory": "external/baselines/tip_adapter",
+      "name": "Tip-Adapter",
+      "upstream": "https://github.com/gaopengcuhk/Tip-Adapter.git",
+      "branch": "main",
+      "commit": "d0e2d6f8c5feb8b6ce937b757810761f7155d4d5",
+      "methods": [
+        "tip_adapter"
+      ]
+    },
+    {
+      "directory": "external/baselines/ape",
+      "name": "APE",
+      "upstream": "https://github.com/yangyangyang127/APE.git",
+      "branch": "main",
+      "commit": "70460de74d1e967f8b4d270b3419373694758536",
+      "methods": [
+        "ape"
+      ]
+    },
+    {
+      "directory": "external/baselines/lpplusplus",
+      "name": "FewShot-CLIP-Strong-Baseline",
+      "upstream": "https://github.com/FereshteShakeri/FewShot-CLIP-Strong-Baseline.git",
+      "branch": "main",
+      "commit": "f81054f995b060f8348d20e7306e15889b70c786",
+      "methods": [
+        "lpplusplus"
+      ]
+    },
+    {
+      "directory": "external/baselines/gda_clip",
+      "name": "ICLR24",
+      "upstream": "https://github.com/mrflogs/ICLR24.git",
+      "branch": "main",
+      "commit": "560fe211700964c915442ff98dbe47dd09656a35",
+      "methods": [
+        "gda_clip"
+      ]
+    },
+    {
+      "directory": "external/baselines/proker",
+      "name": "ProKeR",
+      "upstream": "https://github.com/ybendou/ProKeR.git",
+      "branch": "main",
+      "commit": "f2ecb3d2a0d7e0993f977e550286b34f06015edb",
+      "methods": [
+        "proker"
+      ]
+    }
+  ],
+  "local_methods_without_vendored_source": [
+    {
+      "method": "ridge_classifier",
+      "implementation": "tfclip unified runner",
+      "dependency": "sklearn.linear_model.RidgeClassifier"
+    },
+    {
+      "method": "linear_svm",
+      "implementation": "tfclip unified runner",
+      "dependency": "sklearn.svm.LinearSVC or sklearn.svm.SVC(kernel='linear')"
+    },
+    {
+      "method": "nearest_centroid",
+      "implementation": "tfclip unified runner",
+      "dependency": "sklearn.neighbors.NearestCentroid"
+    },
+    {
+      "method": "knn",
+      "implementation": "tfclip unified runner",
+      "dependency": "sklearn.neighbors.KNeighborsClassifier"
+    },
+    {
+      "method": "soft_knn",
+      "implementation": "tfclip unified runner",
+      "dependency": "local cosine-weighted voting"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+datasets:
+  - dtd
+  - food101
+  - oxford_pets
+  - flowers102
+  - fgvc_aircraft
+  - eurosat
+  - stanford_cars
+methods:
+  - zero_shot
+  - prompt_ensemble
+  - linear_probe
+  - ridge
+  - svm
+  - nearest_centroid
+  - knn
+  - soft_knn
+  - tip_adapter
+  - ape
+  - lpplusplus
+  - gda_clip
+  - proker
+shots: [1, 2, 4, 8, 16]
+seeds: [1, 2, 3]
+model:
+  model_name: ViT-B-32
+  pretrained: openai

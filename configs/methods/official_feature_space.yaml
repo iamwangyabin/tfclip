@@ -1,0 +1,103 @@
+source_snapshots:
+  tip_adapter: external/baselines/tip_adapter/configs
+  ape: external/baselines/ape/configs
+  lpplusplus: external/baselines/lpplusplus/configs/base.yaml
+  gda_clip: external/baselines/gda_clip/configs/few_shots
+  proker: external/baselines/proker/configs/RN50/configs_proker
+
+dataset_aliases:
+  caltech101: caltech101
+  dtd: dtd
+  eurosat: eurosat
+  fgvc: fgvc
+  fgvc_aircraft: fgvc
+  flowers102: oxford_flowers
+  food101: food101
+  imagenet: imagenet
+  imagenet_a: imagenet
+  imagenet_adversarial: imagenet
+  imagenet_r: imagenet
+  imagenet_rendition: imagenet
+  imagenet_sketch: imagenet
+  imagenet_v2: imagenet
+  imagenetv2: imagenet
+  oxford_flowers: oxford_flowers
+  oxford_pets: oxford_pets
+  stanford_cars: stanford_cars
+  sun397: sun397
+  ucf101: ucf101
+
+support_cache_policy:
+  transform: official_openai_clip_train
+  transform_details:
+    resize_crop: RandomResizedCrop(size=224, scale=[0.5, 1.0], interpolation=bicubic)
+    flip: RandomHorizontalFlip(p=0.5)
+    normalize_mean: [0.48145466, 0.4578275, 0.40821073]
+    normalize_std: [0.26862954, 0.26130258, 0.27577711]
+  stored_feature_space: raw_encoder_outputs
+  cache_key_fields: [dataset, model_id, seed, shots, augment_epoch, transform, stored_feature_space]
+
+tip_adapter:
+  all:
+    support_cache: raw_mean_then_l2
+  caltech101: {search_scale: [12, 5], search_step: [200, 20], init_beta: 1, init_alpha: 3, augment_epoch: 10, train_epoch: 20}
+  dtd: {search_scale: [13, 13], search_step: [200, 20], init_beta: 1, init_alpha: 2, augment_epoch: 10, train_epoch: 20}
+  eurosat: {search_scale: [12, 10], search_step: [200, 20], init_beta: 1, init_alpha: 2, augment_epoch: 10, train_epoch: 100}
+  fgvc: {search_scale: [30, 30], search_step: [200, 20], init_beta: 1, init_alpha: 5, augment_epoch: 10, train_epoch: 20}
+  food101: {search_scale: [10, 10], search_step: [200, 20], init_beta: 1, init_alpha: 1.17, augment_epoch: 10, train_epoch: 20}
+  imagenet: {search_scale: [7, 3], search_step: [200, 20], init_beta: 1, init_alpha: 1.17, augment_epoch: 10, train_epoch: 20}
+  oxford_flowers: {search_scale: [50, 50], search_step: [200, 20], init_beta: 1, init_alpha: 10, augment_epoch: 10, train_epoch: 20}
+  oxford_pets: {search_scale: [7, 3], search_step: [200, 20], init_beta: 1, init_alpha: 1.17, augment_epoch: 10, train_epoch: 20}
+  stanford_cars: {search_scale: [20, 10], search_step: [200, 20], init_beta: 1, init_alpha: 3, augment_epoch: 10, train_epoch: 20}
+  sun397: {search_scale: [12, 10], search_step: [200, 20], init_beta: 1, init_alpha: 1.17, augment_epoch: 10, train_epoch: 20}
+  ucf101: {search_scale: [7, 3], search_step: [200, 20], init_beta: 1, init_alpha: 3, augment_epoch: 10, train_epoch: 20}
+
+ape:
+  all:
+    support_cache: raw_mean_then_l2
+    text_prompts: template_plus_cupl
+  caltech101: {search_scale: [7, 7, 1], search_step: [200, 20, 20], init_beta: 1, init_alpha: 1, init_gamma: 0.1, eps: 0.001, training_free_feat_num: 800, training_feat_num: 900, w_training_free: [0.5, 0.5], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 30}
+  dtd: {search_scale: [7, 7, 1], search_step: [200, 20, 20], init_beta: 1, init_alpha: 3, init_gamma: 0.1, eps: 0.001, training_free_feat_num: 400, training_feat_num: 700, w_training_free: [0.5, 0.5], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 20}
+  eurosat: {search_scale: [30, 5, 1.5], search_step: [200, 20, 20], init_beta: 1, init_alpha: 1, init_gamma: 0.1, eps: 0.001, training_free_feat_num: 700, training_feat_num: 900, w_training_free: [0.9, 0.1], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 200}
+  fgvc: {search_scale: [20, 10, 1], search_step: [200, 20, 20], init_beta: 1, init_alpha: 5, init_gamma: 0.1, eps: 0.001, training_free_feat_num: 800, training_feat_num: 900, w_training_free: [0.1, 0.9], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 30}
+  food101: {search_scale: [7, 7, 1], search_step: [200, 20, 20], init_beta: 1, init_alpha: 0.8, init_gamma: 0.1, eps: 0.001, training_free_feat_num: 700, training_feat_num: 900, w_training_free: [0.3, 0.7], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 30}
+  imagenet: {search_scale: [7, 7, 0.5], search_step: [200, 20, 5], init_beta: 1, init_alpha: 2, init_gamma: 0.1, eps: 0.001, training_free_feat_num: 500, training_feat_num: 500, w_training_free: [0.7, 0.3], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 20}
+  oxford_flowers: {search_scale: [7, 7, 1], search_step: [200, 20, 20], init_beta: 1, init_alpha: 3, init_gamma: 0.1, eps: 0.001, training_free_feat_num: 700, training_feat_num: 800, w_training_free: [0.4, 0.6], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 60}
+  oxford_pets: {search_scale: [7, 7, 1], search_step: [200, 20, 20], init_beta: 1, init_alpha: 2, init_gamma: 0.1, eps: 0.002, training_free_feat_num: 800, training_feat_num: 800, w_training_free: [0.7, 0.3], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 30}
+  stanford_cars: {search_scale: [10, 7, 1], search_step: [200, 20, 20], init_beta: 1, init_alpha: 1, init_gamma: 0.1, eps: 0.005, training_free_feat_num: 500, training_feat_num: 800, w_training_free: [0.6, 0.4], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 30}
+  sun397: {search_scale: [10, 7, 1], search_step: [200, 20, 20], init_beta: 1, init_alpha: 1, init_gamma: 0.1, eps: 0.001, training_free_feat_num: 800, training_feat_num: 800, w_training_free: [0.7, 0.3], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 30}
+  ucf101: {search_scale: [10, 7, 1.5], search_step: [200, 20, 20], init_beta: 1, init_alpha: 2, init_gamma: 0.1, eps: 0.002, training_free_feat_num: 700, training_feat_num: 800, w_training_free: [0.3, 0.7], w_training: [0.2, 0.8], augment_epoch: 10, train_epoch: 30}
+
+lpplusplus:
+  all:
+    method: LinearProbe_P2
+    train_epoch: 300
+    batch_size: 256
+    lr: 0.001
+    num_step: 8
+    augment_epoch: 1
+    support_cache: raw_l2_each_view
+    classifier_centroid: class_sum
+    alpha_update_interval: 10
+
+gda_clip:
+  all:
+    augment_epoch: 10
+    support_cache: raw_l2_each_view
+    alpha_grid: [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+
+proker:
+  all:
+    augment_epoch: 10
+    support_cache: raw_l2_each_view
+  caltech101: {beta: [0.5, 3, 20], lmbda: [0.001, 1, 10]}
+  dtd: {beta: [0.1, 10, 20], lmbda: [0.001, 10, 100]}
+  eurosat: {beta: [0.5, 3, 20], lmbda: [0.001, 1, 100]}
+  fgvc: {beta: [0.5, 3, 20], lmbda: [0.001, 1, 10]}
+  food101: {beta: [0.5, 3, 20], lmbda: [0.001, 1, 10]}
+  imagenet: {beta: [1.5, 3, 10], lmbda: [0.05, 0.25, 10]}
+  oxford_flowers: {beta: [0.1, 10, 20], lmbda: [0.001, 10, 100]}
+  oxford_pets: {beta: [0.01, 5, 40], lmbda: [0.01, 0.3, 20]}
+  stanford_cars: {beta: [0.1, 10, 5], lmbda: [0.01, 1, 5]}
+  sun397: {beta: [0.1, 10, 20], lmbda: [0.01, 10, 10]}
+  ucf101: {beta: [0.5, 3, 20], lmbda: [0.001, 1, 10]}
