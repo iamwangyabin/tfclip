@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
-from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 
 from .config import get_method_config
@@ -76,6 +76,19 @@ def _predict_sklearn(model, test_x: np.ndarray, num_classes: int) -> np.ndarray:
     return logits
 
 
+def _nearest_centroid_logits(train_x: np.ndarray, train_y: np.ndarray, test_x: np.ndarray, num_classes: int) -> np.ndarray:
+    centroids = []
+    for label in range(num_classes):
+        class_x = train_x[train_y == label]
+        if len(class_x) == 0:
+            raise ValueError(f"No support examples found for class {label}")
+        centroids.append(class_x.mean(axis=0))
+
+    centroids = np.stack(centroids).astype("float32")
+    distances = ((test_x[:, None, :] - centroids[None, :, :]) ** 2).sum(axis=2)
+    return (-distances).astype("float32")
+
+
 def _run_classifier(method: str, train_x, train_y, test_x, num_classes: int) -> np.ndarray:
     if method == "linear_probe":
         model = LogisticRegression(max_iter=5000, C=1.0, solver="lbfgs", n_jobs=1)
@@ -83,8 +96,6 @@ def _run_classifier(method: str, train_x, train_y, test_x, num_classes: int) -> 
         model = RidgeClassifier(alpha=1.0)
     elif method == "svm":
         model = LinearSVC(C=1.0, max_iter=10000)
-    elif method == "nearest_centroid":
-        model = NearestCentroid(metric="euclidean")
     elif method == "knn":
         k = min(5, len(train_y))
         model = KNeighborsClassifier(n_neighbors=k, metric="cosine", weights="uniform")
@@ -387,9 +398,12 @@ def run_feature_method(
     if method in {"zero_shot", "prompt_ensemble"}:
         logits = cosine_logits(test_x, text_features)
         params = {}
-    elif method in {"linear_probe", "ridge", "svm", "nearest_centroid", "knn"}:
+    elif method in {"linear_probe", "ridge", "svm", "knn"}:
         logits = _run_classifier(method, train_x, train_y, test_x, num_classes)
         params = {}
+    elif method == "nearest_centroid":
+        logits = _nearest_centroid_logits(train_x, train_y, test_x, num_classes)
+        params = {"metric": "euclidean"}
     elif method == "soft_knn":
         logits = _soft_knn(train_x, train_y, test_x, num_classes)
         params = {"k": min(5, len(train_y)), "temperature": 20.0}
