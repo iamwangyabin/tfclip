@@ -47,6 +47,12 @@ def parse_args() -> argparse.Namespace:
         help="CLIP prompt file used to recover StanfordCars class order.",
     )
     parser.add_argument(
+        "--class-json",
+        type=Path,
+        default=Path("external/baselines/ape/gpt3_prompts/CuPL_prompts_stanfordcars.json"),
+        help="Fallback JSON whose keys are StanfordCars class names in order.",
+    )
+    parser.add_argument(
         "--official-split",
         type=Path,
         default=Path("data/stanford_cars/_downloads/split_zhou_StanfordCars.gdrive.html"),
@@ -57,27 +63,37 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_class_names(prompt_path: Path) -> list[str]:
-    text = prompt_path.read_text(encoding="utf-8")
-    match = re.search(
-        r"## StanfordCars\s+```bash\s+classes = (\[.*?\])\s+templates =",
-        text,
-        flags=re.DOTALL,
-    )
-    if not match:
-        raise RuntimeError(f"Could not parse StanfordCars classes from {prompt_path}")
+def load_class_names(prompt_path: Path, class_json_path: Path) -> list[str]:
+    if prompt_path.exists():
+        text = prompt_path.read_text(encoding="utf-8")
+        match = re.search(
+            r"## StanfordCars\s+```bash\s+classes = (\[.*?\])\s+templates =",
+            text,
+            flags=re.DOTALL,
+        )
+        if match:
+            classes = ast.literal_eval(match.group(1))
+        elif class_json_path.exists():
+            classes = list(json.loads(class_json_path.read_text(encoding="utf-8")).keys())
+        else:
+            raise RuntimeError(f"Could not parse StanfordCars classes from {prompt_path}")
+    elif class_json_path.exists():
+        classes = list(json.loads(class_json_path.read_text(encoding="utf-8")).keys())
+    else:
+        raise FileNotFoundError(f"Missing class sources: {prompt_path} and {class_json_path}")
 
-    classes = ast.literal_eval(match.group(1))
     if len(classes) != 196:
         raise RuntimeError(f"Expected 196 classes, found {len(classes)}")
     return classes
 
 
 def year_first(class_name: str) -> str:
-    parts = class_name.split(" ")
-    year = parts.pop(-1)
-    parts.insert(0, year)
-    return " ".join(parts)
+    if re.match(r"^\d{4}\b", class_name):
+        return class_name
+    match = re.match(r"^(.*)\s+(\d{4})$", class_name)
+    if not match:
+        return class_name
+    return f"{match.group(2)} {match.group(1)}"
 
 
 def official_val_counts(path: Path) -> Counter[int]:
@@ -192,7 +208,7 @@ def main() -> None:
     root = args.root
     root.mkdir(parents=True, exist_ok=True)
 
-    class_names = load_class_names(args.clip_prompts)
+    class_names = load_class_names(args.clip_prompts, args.class_json)
 
     train_paths = [args.parquet_dir / name for name in TRAIN_FILES]
     test_paths = [args.parquet_dir / name for name in TEST_FILES]
