@@ -4,3 +4,23 @@ __pycache__/
 
 /data/
 outputs/
+
+# Generated documents, logs, and LaTeX build artifacts
+*.pdf
+*.log
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.xdv
